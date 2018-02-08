@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<head>
+<title>
+Web Workshop
+</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css?family=Acme');
+
+html, body {font-size: 100%; line-height: 130%; font-family: 'Acme', arial, sans-serif}
+body {margin: 0px; background: #666666}
+#topnav nav {overflow: hidden; text-align: center}
+#topnav nav a, #topnav i.fa {display: inline-block; color: #ffffff; text-align: center; padding: 15px; text-decoration: none; font-size: 1.5em; line-height: 100%;}
+#topnav nav a:hover {background-color: #ddd; color: black}
+#topnav nav a.active, #topnav nav a:active {background-color: #000000; color: white;}
+#topnav nav a.icon {display: none;}
+#topnav i.fa {float: left; color: #d9d9d9; text-shadow: 1px 1px 0px #000000;}
+
+main {width: 100%; background: linear-gradient(to bottom, #cccccc, #666666)}
+main article {background: #ffffff; margin-left: 20px; margin-right: 20px; padding: 20px; font-size: 1.2em}
+main article section {color: #666666; padding-top: .5em}
+main article section figure {text-align: center; display: block; padding: 1em; margin: 0px}
+main article section figure img {margin: auto; width: 50%}
+main article section figure figcaption {color: #999999; font-size: .9em; padding: 1em}
+main article header {text-shadow: 1px 1px 2px #d9d9d9; font-size: 2em; text-align: center; padding: .5em}
+
+footer {padding: 20px; text-align: center; color: #ffffff; text-transform: uppercase; font-size: .8em}
+footer a {color: #cccccc}
+
+@media screen and (max-width: 800px) {
+  #topnav nav a {display: block; text-align: left}
+  #topnav nav a:not(:first-child) {display: none;}
+  #topnav nav {position: relative;}
+  #topnav nav a.icon {position: absolute; right: 0; top: 0; display: block;}
+  #topnav nav.responsive a {display: block}
+  
+  main article section figure img {margin: auto; width: 100%}
+  
+  #topnav i.fa {display: block; float: none; text-align: center}
+  #topnav nav.nojs a.icon {display: none}
+  #topnav nav.responsive.nojs a {text-align: center}
+}
+</style>
+</head>
+<body>
+
+<section id="topnav">
+<i class="fa fa-paw"></i>
+<nav class="responsive nojs">
+<div>
+<a href="final.html#thezoo" title="thezoo">Our Zoo</a><a href="final.html#cheetah" title="cheetah">Cheetah</a><a href="final.html#elephant" title="elephant">Elephant</a><a href="final.html#puffin" title="puffin">Puffin</a><a href="final.html#hyena" title="hyena">Hyena</a><a href="#" class="icon dropdown">&#9776;</a>
+</div>
+</nav>
+</section>
+
+<main>
+<article id="thezoo">
+<header>
+Welcome to the Zoo!
+</header>
+<section>
+Our zoo features lots of special creatures and animals. Click around and take a look.
+</section>
+</article>
+<article id="cheetah">
+<header>
+The fastest animal
+</header>
+<section>
+<figure>
+  <img src="cheetah.jpg">	
+  <figcaption>Photo of Cheetah</figcaption>
+</figure>
+The cheetah is a very fast animal and needs the speed to chase down its food.
+</section>
+</article>
+<article id="elephant">
+<header>
+A giant animal
+</header>
+<section>
+<figure>
+  <img src="elephant.jpg">	
+  <figcaption>Photo of Elephant</figcaption>
+</figure>
+The elephant is a large animal with tusks.
+</section>
+</article>
+<article id="puffin">
+<header>
+A small colorful bird
+</header>
+<section>
+<figure>
+  <img src="puffin.jpg">	
+  <figcaption>Photo of Puffin</figcaption>
+</figure>
+The puffin is a small bird with a colorful beak.
+</section>
+</article>
+<article id="hyena">
+<header>
+Hyenas love to laugh
+</header>
+<section>
+<figure>
+  <img src="hyena.jpg">	
+  <figcaption>Photo of Hyena</figcaption>
+</figure>
+The hyena is always laughing, or at least sounds like it is.
+</section>
+</article>
+</main>
+
+<footer>
+This page has been created by Joshua Lipinski <a href="http://github.com/jlipinski3">GitHub</a>
+</footer>
+
+<script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script>
+
+(function($){	
+	jQuery(function($){
+		//some history api assistance
+		$.urlParam = function(name){ //quick jquery function for parsing url params
+			var results = new RegExp('[\?&#/]' + name + '=([^!&#]*)').exec(window.location.href);
+			if(results){return results[1] || 0;}
+		}
+		window.onpopstate = function(event){ //"onpopstate" is fired when using the browser back and forward buttons. add a "nopush" property to state when passing to active_tab so the back and forward actions dont append to state, but instead allow the user to traverse existing state.
+			if(event && event.state)
+			{ 
+				clone_state = $.extend({}, event.state); //must do this for IE since it doesn't allow manipulation of event.state object
+				if(clone_state.animal){clone_state.nopush = true;}
+				active_tab(clone_state);
+			} else if('state' in window.history){window.location.reload();} //reload if using a hard server param like "?param="
+		}
+		
+		//set some initial vars
+		var landing_hash = decodeURIComponent(window.location.hash.substring(1)).toLowerCase().replace(/\s+/g,''); //support "#" links as they are the nonjs fallback and should be treated as the primary (animal) param
+		var page_params = {animal: ($.urlParam("animal") || landing_hash)}; //use the ?animal param or the landing hash as the page param. animal param takes precedence.
+		/* 
+		NOTE HERE: page_params could easily be built out beyond a single key-value pair. example, using server-rendered PHP:
+		var page_params = <?php echo json_encode(array_intersect_key($_GET, (array_flip(preg_grep('/blog_|db|filter|post/i', array_keys($_GET)))))); ?>;
+		this would take any query string params that match "blog_", "db", "filter", or "post" and create JSON object with those key-values, using the power of server-side preprocessing to do so
+		*/
+		
+		var first_load = true; //for use below so that the history state isnt pushed on initial page load
+		
+		var $nav = $("#topnav nav"); //nav menu
+		var $articles = $("main article"); //content area with articles
+		var default_show = $nav.find("a").first().attr("title"); //if no animal param, show this first
+		$nav.removeClass("responsive").removeClass("nojs"); //remove these classes for "hamburger" menu functionality with javascript
+		
+		//intercept nav clicks below to toggle the hamburger menu or to show specific content
+		$nav.on("click", "a", function(e){ //intercept nav menu clicks
+			e.preventDefault();
+			if($(this).hasClass("dropdown")) //the hamburger icon has the dropdown class and will collapse or expand using the responsive class on the nav
+			{
+				$nav.toggleClass("responsive");
+			} 
+			else
+			{
+				active_tab({animal: $(this).attr("title")}); //pass the title attr of the nav link to the active tab function below
+			}	
+		});
+		
+		//this drives everything
+		function active_tab(params)
+		{
+			//as pointed out above, params can be built out beyond just an "animal" property
+			if(params.animal)
+			{
+				//this may be where an ajax call is made using the params supplied to the function, but for this exercise we are using content already on the page
+				
+				let $article = $articles.filter("#" + params.animal); //jquery pointer to the article specified in url
+				let $nav_link = $nav.find("a[title='" + params.animal + "']"); //jquery pointer to the nav link specified in url
+			
+				if($nav_link.length && $article.length) //before going forward, ensure there is a link and an article that match the param
+				{
+					if(!$nav_link.is(":first-child") && !$nav_link.hasClass("active")){$nav.addClass("responsive");} //if this isnt the first link in the nav AND the nav isnt already active (meaning this is a new page load) then add the responsive class to the nav so it's open on page load
+					$(".active", $nav).removeClass("active"); //remove all active links before setting a new active
+					$nav_link.addClass("active"); //set current to active;
+					$articles.not("#" + params.animal).hide(); //hide all articles that are not this one (using id attr)
+					$article.show();
+				
+					//prepare to push to browser history object
+					var clean_url = $.extend({}, params); //duplicate the params object to allow for manipulation before sending to history object
+					delete clean_url.nopush; //dont bother using this in url
+					delete clean_url.force_replace; //again not to be used for url
+					
+					var url_add = $.param(clean_url) + (landing_hash&&landing_hash!=params.animal?"#"+landing_hash:"") +  "!view"; //rebuild the query string, taking only what is desired and add "!view" so the browser registers a unique push
+					var push_url = (location.protocol+'//'+location.host+location.pathname+(url_add!=""?"?"+url_add:"")); //rebuild the url using fresh parameterization
+					var title = document.title.split(" - ")[0] + " - " + params.animal; //set a new title - not supported by (most) browsers
+					params.title = title; //set the title of the page and save to state params using javascript
+					
+					if(history.pushState && !params.nopush) //ensure browser supports pushState and this isn't a back or forward click
+					{
+						if(landing_hash == params.animal || params.force_replace) //for a #animal hash which is replaced to "?animal" or this is a default_show
+						{
+							history.replaceState(params, title, push_url);
+						}
+						else if(!first_load) //if not the first load then proceed with the pushStates to modify the browser history
+						{
+							history.pushState(params, title, push_url);
+						}
+					}
+					//you could also add a hash scrolling function here in case there are multiple sections within an article. ex: ?animal=cheetah#habitat and intercept "habitat" in a $nav.on("click", "a", function(e){e.preventDefault();$(this).attr("href").split("#"); ...and pass it to active_tab as a "scroll_to" property
+					
+					document.title = title; //set the tab/window title
+					first_load = landing_hash = false; //clear both of these so the future pushStates can happen
+					return;
+				}
+			}
+			active_tab({animal: default_show, force_replace: true}); //run recursively to show default content if function has not returned
+		}
+		
+		//run active tab on initial page load
+		active_tab(page_params);
+	});
+})();
+
+</script>
+</body>
+</html>
