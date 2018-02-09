@@ -26,6 +26,6 @@ final.html (more javascript):
 2. enclose in IIFE
 
 References:
-https://developer.mozilla.org
-http://code.jquery.com
-https://www.bootstrapcdn.com/fontawesome/
+-https://developer.mozilla.org
+-http://code.jquery.com
+-https://www.bootstrapcdn.com/fontawesome/
