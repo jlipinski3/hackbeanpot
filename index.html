@@ -6,16 +6,17 @@ Web Workshop
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 <style>
-@import url('https://fonts.googleapis.com/css?family=Acme');
+@import url('https://fonts.googleapis.com/css?family=Fjalla+One');
 
-html, body {font-size: 100%; line-height: 130%; font-family: 'Acme', arial, sans-serif}
+html, body {font-size: 100%; line-height: 130%; font-family: 'Fjalla One', arial, sans-serif}
 body {margin: 0px; background: #666666}
 #topnav nav {overflow: hidden; text-align: center}
+#topnav nav > div {display: inline-block}
 #topnav nav a, #topnav i.fa {display: inline-block; color: #ffffff; text-align: center; padding: 15px; text-decoration: none; font-size: 1.5em; line-height: 100%;}
 #topnav nav a:hover {background-color: #ddd; color: black}
 #topnav nav a.active, #topnav nav a:active {background-color: #000000; color: white;}
 #topnav nav a.icon {display: none;}
-#topnav i.fa {float: left; color: #d9d9d9; text-shadow: 1px 1px 0px #000000;}
+#topnav i.fa {color: #d9d9d9; text-shadow: 1px 1px 0px #000000;}
 
 main {width: 100%; background: linear-gradient(to bottom, #cccccc, #666666)}
 main article {background: #ffffff; margin-left: 20px; margin-right: 20px; padding: 20px; font-size: 1.2em}
@@ -31,13 +32,14 @@ footer a {color: #cccccc}
 @media screen and (max-width: 800px) {
   #topnav nav a {display: block; text-align: left}
   #topnav nav a:not(:first-child) {display: none;}
-  #topnav nav {position: relative;}
+  #topnav nav > div {position: relative; display: block}
   #topnav nav a.icon {position: absolute; right: 0; top: 0; display: block;}
   #topnav nav.responsive a {display: block}
   
   main article section figure img {margin: auto; width: 100%}
   
-  #topnav i.fa {display: block; float: none; text-align: center}
+  #topnav i.fa {display: none}
+  #topnav i.fa:first-child {display: block; float: none; text-align: center}
   #topnav nav.nojs a.icon {display: none}
   #topnav nav.responsive.nojs a {text-align: center}
 }
@@ -46,11 +48,12 @@ footer a {color: #cccccc}
 <body>
 
 <section id="topnav">
-<i class="fa fa-paw"></i>
 <nav class="responsive nojs">
+<i class="fa fa-paw"></i>
 <div>
-<a href="final.html#thezoo" title="thezoo">Our Zoo</a><a href="final.html#cheetah" title="cheetah">Cheetah</a><a href="final.html#elephant" title="elephant">Elephant</a><a href="final.html#puffin" title="puffin">Puffin</a><a href="final.html#hyena" title="hyena">Hyena</a><a href="#" class="icon dropdown">&#9776;</a>
+<a href="#thezoo" title="thezoo">Our Zoo</a><a href="#cheetah" title="cheetah">Cheetah</a><a href="#elephant" title="elephant">Elephant</a><a href="#puffin" title="puffin">Puffin</a><a href="#hyena" title="hyena">Hyena</a><a href="#" class="icon dropdown">&#9776;</a>
 </div>
+<i class="fa fa-paw"></i>
 </nav>
 </section>
 
