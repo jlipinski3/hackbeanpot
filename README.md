@@ -1,6 +1,6 @@
 # hackbeanpot
 step1.html (basic html structure):
-1. create new text doc, save as "webworkshop.html" (or any filename with an .html extension)
+1. create new text doc, save as "webworkshop.html" (or any filename with an .html extension - index.html, etc)
 2. open in text editor
 3. create a basic semantic html5 structure
 	-grab some images and create some text!
