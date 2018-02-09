@@ -1,4 +1,6 @@
 # hackbeanpot
+This is a progressive exercise which starts with writing basic, semantic html and ends with advanced javascript that manipulates the browser history object. Along the way you'll be adding CSS, making that CSS responsive for a smaller viewport, adding a google font, and then referencing the jQuery library to turn your webpage into a single-page application.
+
 step1.html (basic html structure):
 1. create new text doc, save as "webworkshop.html" (or any filename with an .html extension - index.html, etc)
 2. open in text editor
