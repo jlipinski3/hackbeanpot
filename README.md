@@ -27,5 +27,7 @@ final.html (more javascript):
 
 References:
 -https://developer.mozilla.org
+
 -http://code.jquery.com
+
 -https://www.bootstrapcdn.com/fontawesome/
