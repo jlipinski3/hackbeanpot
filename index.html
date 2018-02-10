@@ -24,18 +24,21 @@ main article section {color: #666666; padding-top: .5em}
 main article section figure {text-align: center; display: block; padding: 1em; margin: 0px}
 main article section figure img {margin: auto; width: 50%}
 main article section figure figcaption {color: #999999; font-size: .9em; padding: 1em}
-main article header {text-shadow: 1px 1px 2px #d9d9d9; font-size: 2em; text-align: center; padding: .5em}
+main article header {text-shadow: 1px 1px 2px #d9d9d9; font-size: 2em; text-align: center; padding: .5em; line-height: 110%}
 
 footer {padding: 20px; text-align: center; color: #ffffff; text-transform: uppercase; font-size: .8em}
 footer a {color: #cccccc}
 
 @media screen and (max-width: 800px) {
   #topnav nav a {display: block; text-align: left}
+  #topnav nav a:hover {background-color: #000000; color: white}
   #topnav nav a:not(:first-child) {display: none;}
   #topnav nav > div {position: relative; display: block}
   #topnav nav a.icon {position: absolute; right: 0; top: 0; display: block;}
   #topnav nav.responsive a {display: block}
-  
+
+  main article {margin: 0px}
+  main article section figure {padding-left: 0px; padding-right: 0px}
   main article section figure img {margin: auto; width: 100%}
   
   #topnav i.fa {display: none}
@@ -64,7 +67,7 @@ Welcome to the Zoo!
 </header>
 <section>
 <figure>
-  <img src="thezoo.jpg">
+  <img src="thezoo.jpg" alt="The Zoo">
 </figure>
 Our zoo features lots of special creatures and animals. Click around and take a look.
 </section>
@@ -75,7 +78,7 @@ The fastest animal
 </header>
 <section>
 <figure>
-  <img src="cheetah.jpg">	
+  <img src="cheetah.jpg" alt="Cheetah">	
   <figcaption>Photo of Cheetah</figcaption>
 </figure>
 The cheetah is a very fast animal and needs the speed to chase down its food.
@@ -87,7 +90,7 @@ A giant animal
 </header>
 <section>
 <figure>
-  <img src="elephant.jpg">	
+  <img src="elephant.jpg" alt="Elephant">	
   <figcaption>Photo of Elephant</figcaption>
 </figure>
 The elephant is a large animal with tusks.
@@ -99,7 +102,7 @@ A small colorful bird
 </header>
 <section>
 <figure>
-  <img src="puffin.jpg">	
+  <img src="puffin.jpg" alt="Puffin">	
   <figcaption>Photo of Puffin</figcaption>
 </figure>
 The puffin is a small bird with a colorful beak.
@@ -111,7 +114,7 @@ Hyenas love to laugh
 </header>
 <section>
 <figure>
-  <img src="hyena.jpg">	
+  <img src="hyena.jpg" alt="Hyena">	
   <figcaption>Photo of Hyena</figcaption>
 </figure>
 The hyena is always laughing, or at least sounds like it is.
@@ -120,7 +123,7 @@ The hyena is always laughing, or at least sounds like it is.
 </main>
 
 <footer>
-This page has been created by Joshua Lipinski <a href="http://github.com/jlipinski3">GitHub</a>
+This page has been created by Joshua Lipinski <a href="http://github.com/jlipinski3" target="_blank">GitHub</a>
 </footer>
 
 <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
