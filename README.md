@@ -5,7 +5,7 @@ step1.html (basic html structure):
 1. create new text doc, save as "webworkshop.html" (or any filename with an .html extension - index.html, etc)
 2. open in text editor
 3. create a basic semantic html5 structure
-	-grab some images and create some text!
+4. grab some images and create some text!
 
 -"semantic html" is important for search engine readability, as well as providing solid coding structure for developer readability.
 
@@ -14,7 +14,7 @@ step2.html (styles):
 1. styles
 2. font awesome (https://www.bootstrapcdn.com/fontawesome/)
 
--well-structured-well-structured CSS is a beautiful and powerful thing. It smooths out cross-browser quirks and provides one area from which you can control much of your site's layout and design. Because CSS "cascades", later style declarations will override previous declarations (with the exception of the !important callout). Fontawesome provides a library of vector graphics (SVGs) that will scale without loss.
+-well-structured CSS is a beautiful and powerful thing. It smooths out cross-browser quirks and provides one area from which you can control much of your site's layout and design. Because CSS "cascades", later style declarations will override previous declarations (with the exception of the !important callout). Fontawesome provides a library of vector graphics (SVGs) that will scale without loss.
 
 
 step3.html (responsive design):
@@ -22,7 +22,7 @@ step3.html (responsive design):
 2. viewport tag
 3. google font (fonts.google.com)
 
--media-media queries are able to identify the way a user is viewing a site so a developer can accomodate these different use cases. It is not just limited to screen size, but print vs screen, landscape vs portrait, and other cases.
+-media queries are able to identify the way a user is viewing a site so a developer can accomodate these different use cases. It is not just limited to screen size, but print vs screen, landscape vs portrait, and other cases.
 
 
 step4.html (add javascript):
@@ -30,14 +30,14 @@ step4.html (add javascript):
 2. "console" and "debugger"
 3. responsive menu toggle
 
--jQuery-jQuery is a powerful Javascript library that enables easy manipulation of elements using the DOM (Document Object Model), with excellent support for ajax.
+-jQuery is a powerful Javascript library that enables easy manipulation of elements using the DOM (Document Object Model), with excellent support for ajax.
 
 
 final.html (more javascript):
 1. browser history
 2. enclose in IIFE
 
--up-up to this point, the single-page application does the job, but does not contribute much to shareability. Modifying the browser history allows the experience to be shared between users.
+-up to this point, the single-page application does the job, but does not contribute much to shareability. Modifying the browser history allows the experience to be shared between users.
 
 
 Finally...
