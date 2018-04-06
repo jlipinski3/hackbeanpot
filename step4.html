@@ -154,8 +154,8 @@ jQuery(function($){
 		{
 			//this may be where an ajax call is made using the params supplied to the function, but for this exercise we are using content already on the page
 			
-			let $article = $articles.filter("#" + params.animal); //jquery pointer to the article specified in url
-			let $nav_link = $nav.find("a[title='" + params.animal + "']"); //jquery pointer to the nav link specified in url
+			var $article = $articles.filter("#" + params.animal); //jquery pointer to the article specified in url
+			var $nav_link = $nav.find("a[title='" + params.animal + "']"); //jquery pointer to the nav link specified in url
 		
 			if($nav_link.length && $article.length) //before going forward, ensure there is a link and an article that match the param
 			{
