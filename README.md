@@ -29,6 +29,7 @@ step4.html (add javascript):
 1. go to code.jquery.com, grab minified link
 2. "console" and "debugger"
 3. responsive menu toggle
+4. newview module
 
 -jQuery is a powerful Javascript library that enables easy manipulation of elements using the DOM (Document Object Model), with excellent support for ajax.
 
