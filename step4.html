@@ -54,7 +54,7 @@ footer a {color: #cccccc}
 <nav class="responsive nojs">
 <i class="fa fa-paw"></i>
 <div>
-<a href="#thezoo" title="thezoo">Our Zoo</a><a href="#cheetah" title="cheetah">Cheetah</a><a href="#elephant" title="elephant">Elephant</a><a href="#puffin" title="puffin">Puffin</a><a href="#hyena" title="hyena">Hyena</a><a href="#" class="icon dropdown">&#9776;</a>
+<a href="#thezoo" data-show="thezoo">Our Zoo</a><a href="#cheetah" data-show="cheetah">Cheetah</a><a href="#elephant" data-show="elephant">Elephant</a><a href="#puffin" data-show="puffin">Puffin</a><a href="#hyena" data-show="hyena">Hyena</a><a href="#" class="icon dropdown">&#9776;</a>
 </div>
 <i class="fa fa-paw"></i>
 </nav>
@@ -128,54 +128,57 @@ This page has been created by Joshua Lipinski <a href="http://github.com/jlipins
 
 <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script>
+var config = {keep_params: ["view"], content_area: {}};
 
 jQuery(function($){
-	var $nav = $("#topnav nav"); //nav menu
-	var $articles = $("main article"); //content area with articles
-	$nav.removeClass("responsive").removeClass("nojs"); //remove these classes for "hamburger" menu functionality with javascript
+	config.content_area.nav = $("#topnav nav"); //nav menu
+	config.content_area.sections = $("main article"); //content area with articles
+	(config.content_area.nav).removeClass("responsive").removeClass("nojs"); //remove these classes for "hamburger" menu functionality with javascript
 	
-	//intercept nav clicks below to toggle the hamburger menu or to show specific content
-	$nav.on("click", "a", function(e){ //intercept nav menu clicks
+	//intercept nav clicks below to toggle the hamburger menu and to show specific content using the data-show attribute
+	$(document).on("click", "a", function(e){ //intercept anchor clicks
 		e.preventDefault();
 		if($(this).hasClass("dropdown")) //the hamburger icon has the dropdown class and will collapse or expand using the responsive class on the nav
 		{
-			$nav.toggleClass("responsive");
-		} 
+			(config.content_area.nav).toggleClass("responsive");
+		}
 		else
 		{
-			active_tab({animal: $(this).attr("title")}); //pass the title attr of the nav link to the active tab function below
+			if($(this).attr("data-show")){newview.set({view: $(this).data("show")});} //pass the data-show active section function below
 		}	
 	});
-	
-	//this drives everything
-	function active_tab(params)
-	{
-		if(params.animal)
-		{
-			//this may be where an ajax call is made using the params supplied to the function, but for this exercise we are using content already on the page
-			
-			var $article = $articles.filter("#" + params.animal); //jquery pointer to the article specified in url
-			var $nav_link = $nav.find("a[title='" + params.animal + "']"); //jquery pointer to the nav link specified in url
 		
-			if($nav_link.length && $article.length) //before going forward, ensure there is a link and an article that match the param
+	//INITIALIZE!
+	newview.set({view: "thezoo"});
+});
+
+//NEWVIEW MODULE
+var newview = (function(content_box){	
+	return{
+		set: function(params){			
+			if(params.view)
 			{
-				if(!$nav_link.is(":first-child") && !$nav_link.hasClass("active")){$nav.addClass("responsive");} //if this isnt the first link in the nav AND the nav isnt already active (meaning this is a new page load) then add the responsive class to the nav so it's open on page load
-				$(".active", $nav).removeClass("active"); //remove all active links before setting a new active
-				$nav_link.addClass("active"); //set current to active;
-				$articles.not("#" + params.animal).hide(); //hide all articles that are not this one (using id attr)
-				$article.show();
-			var title = document.title.split(" - ")[0] + " - " + params.animal; //set a new title - not supported by (most) browsers
-			params.title = title; //set the title of the page and save to state params using javascript		
-				document.title = title; //set the tab/window title
-				return;
+				//this may be where an ajax call is made using the params supplied to the function, but for this exercise we are using content already on the page
+				var $section = (content_box.sections).filter("#" + params.view); //jquery pointer to the area specified in url
+				var $nav_link = (content_box.nav).find("a[data-show='" + params.view + "']"); //jquery pointer to the nav link specified in url
+			
+				if($nav_link.length && $section.length) //before going forward, ensure there is a link and an area that matches the param
+				{
+					if(!$nav_link.is(":first-child") && !$nav_link.hasClass("active")){(content_box.nav).addClass("responsive");} //if this isnt the first link in the nav AND the nav isnt already active (meaning this is a new page load) then add the responsive class to the nav so it's open on page load
+					$(".active", content_box.nav).removeClass("active"); //remove all active links before setting a new active
+					$nav_link.addClass("active"); //set current to active
+					(content_box.sections).not("#" + params.view).hide(); //hide all articles that are not this one (using id attr)
+					$section.show();
+				
+					var title = document.title.split(" - ")[0] + " - " + params.view; //set a new title - not supported by (most) browsers
+					document.title = title; //set the tab/window title
+					return;
+				}
 			}
 		}
-		active_tab({animal: default_show, force_replace: true}); //run recursively to show default content if function has not returned
-	}
-	
-	//run active tab on initial page load
-	active_tab({animal: "thezoo"});
-});
+	};
+})(config.content_area);
+
 
 </script>
 </body>
