@@ -54,7 +54,7 @@ footer a {color: #cccccc}
 <nav class="responsive nojs">
 <i class="fa fa-paw"></i>
 <div>
-<a href="index.html#thezoo" title="thezoo">Our Zoo</a><a href="index.html#cheetah" title="cheetah">Cheetah</a><a href="index.html#elephant" title="elephant">Elephant</a><a href="index.html#puffin" title="puffin">Puffin</a><a href="index.html#hyena" title="hyena">Hyena</a><a href="#" class="icon dropdown">&#9776;</a>
+<a href="index.html#thezoo" data-show="thezoo">Our Zoo</a><a href="index.html#cheetah" data-show="cheetah">Cheetah</a><a href="index.html#elephant" data-show="elephant">Elephant</a><a href="index.html#puffin" data-show="puffin">Puffin</a><a href="index.html#hyena" data-show="hyena">Hyena</a><a href="#" class="icon dropdown">&#9776;</a>
 </div>
 <i class="fa fa-paw"></i>
 </nav>
@@ -128,84 +128,111 @@ This page has been created by Joshua Lipinski <a href="http://github.com/jlipins
 
 <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script>
+var config = {keep_params: ["view"], content_area: {}};
 
 (function(){	
 	jQuery(function($){
-		//some history api assistance
-		$.urlParam = function(name){ //quick jquery function for parsing url params
-			var results = new RegExp('[\?&#/]' + name + '=([^!&#]*)').exec(window.location.href);
-			if(results){return results[1] || 0;}
-		}
+		config.content_area.nav = $("#topnav nav"); //nav menu
+		config.content_area.sections = $("main article"); //content area with articles
+		config.content_area.default_show = (config.content_area.nav).find("a").first().data("show"); //if no view param, show this first
+		(config.content_area.nav).removeClass("responsive").removeClass("nojs"); //remove these classes for "hamburger" menu functionality with javascript
+	
 		window.onpopstate = function(event){ //"onpopstate" is fired when using the browser back and forward buttons. add a "nopush" property to state when passing to active_tab so the back and forward actions dont append to state, but instead allow the user to traverse existing state.
 			if(event && event.state)
 			{ 
 				clone_state = $.extend({}, event.state); //must do this for IE since it doesn't allow manipulation of event.state object
-				if(clone_state.animal){clone_state.nopush = true;}
-				active_tab(clone_state);
+				if(clone_state.view){clone_state.nopush = true;}
+				newview.set(clone_state);
 			} else if('state' in window.history){window.location.reload();} //reload if using a hard server param like "?param="
 		}
 		
-		//set some initial vars
-		var landing_hash = decodeURIComponent(window.location.hash.substring(1)).toLowerCase().replace(/\s+/g,''); //support "#" links as they are the nonjs fallback and should be treated as the primary (animal) param
-		var page_params = {animal: ($.urlParam("animal") || landing_hash)}; //use the ?animal param or the landing hash as the page param. animal param takes precedence.
-		/* 
-		NOTE HERE: page_params could easily be built out beyond a single key-value pair. example, using server-rendered PHP:
-		var page_params = <?php echo json_encode(array_intersect_key($_GET, (array_flip(preg_grep('/blog_|db|filter|post/i', array_keys($_GET)))))); ?>;
-		this would take any query string params that match "blog_", "db", "filter", or "post" and create JSON object with those key-values, using the power of server-side preprocessing to do so
-		*/
-		
-		var first_load = true; //for use below so that the history state isnt pushed on initial page load
-		
-		var $nav = $("#topnav nav"); //nav menu
-		var $articles = $("main article"); //content area with articles
-		var default_show = $nav.find("a").first().attr("title"); //if no animal param, show this first
-		$nav.removeClass("responsive").removeClass("nojs"); //remove these classes for "hamburger" menu functionality with javascript
-		
-		//intercept nav clicks below to toggle the hamburger menu or to show specific content
-		$nav.on("click", "a", function(e){ //intercept nav menu clicks
+		//intercept nav clicks below to toggle the hamburger menu and to show specific content using the data-show attribute
+		$(document).on("click", "a", function(e){ //intercept anchor clicks
 			e.preventDefault();
 			if($(this).hasClass("dropdown")) //the hamburger icon has the dropdown class and will collapse or expand using the responsive class on the nav
 			{
-				$nav.toggleClass("responsive");
-			} 
+				(config.content_area.nav).toggleClass("responsive");
+			}
 			else
 			{
-				active_tab({animal: $(this).attr("title")}); //pass the title attr of the nav link to the active tab function below
+				if($(this).attr("data-show")){newview.set({view: $(this).data("show")});} //pass the data-show active section function below
 			}	
 		});
 		
-		//this drives everything
-		function active_tab(params)
-		{
-			//as pointed out above, params can be built out beyond just an "animal" property
-			if(params.animal)
+		//INITIALIZE!
+		newview.set(); //call newview module without params to show default content only and hide the rest
+	});
+})();
+
+var url_param = function(name){ //quick function for parsing url params
+	var results = new RegExp('[\?&#/]' + name + '=([^!&#]*)').exec(window.location.href);
+	if(results){return results[1] || 0;}
+};
+
+//NEWVIEW MODULE
+//swap visible content and push to browser history
+//immediately invoked using the config vars for what params to keep from url and the content area this should be used for. can be created in multiple instances by removing IIFE.
+var newview = (function(keep_params, content_box){	
+	var url_params = function(){ //grab url params to bring along for the ride
+		var p = {};
+		for(var x = 0; x<keep_params.length; x++){if(url_param(keep_params[x])){p[keep_params[x]] = url_param(keep_params[x]);}}
+		return p;
+	};
+	
+	var clean_params = function(dirty){ //rinse a set of params, only keeping what we want
+		var p = {};
+		for(var x = 0; x<keep_params.length; x++){if(dirty[keep_params[x]]){p[keep_params[x]] = dirty[keep_params[x]];}}
+		return p;
+	}
+	
+	//set some initial vars
+	var landing_hash = decodeURIComponent(window.location.hash.substring(1)).toLowerCase().replace(/\s+/g,''); //support "#" links as they are the nonjs fallback and should be treated as the primary (view) param
+	var init_params = {view: (url_param("view") || landing_hash)}; //use the ?view param or the landing hash as the page param. view param takes precedence.
+	var first_load = true; //for use below so that the history state isnt pushed on initial page load
+		/* 
+	NOTE HERE: page_params could easily be built out beyond a single key-value pair. example, using server-rendered PHP:
+	var page_params = <?php echo json_encode(array_intersect_key($_GET, (array_flip(preg_grep('/blog_|db|filter|post/i', array_keys($_GET)))))); ?>;
+	this would take any query string params that match "blog_", "db", "filter", or "post" and create JSON object with those key-values, using the power of server-side preprocessing to do so
+	*/
+
+	return{
+		set: function(param_set){
+			//as pointed out above, params can be built out beyond just the "view" property
+			var merge_into = first_load?$.extend({}, url_params(), init_params):url_params(); //if this is the first_load, then overwrite url_params with init_params
+			
+			if(history.pushState) //if browser supports history object, we can carry url params with us
+			{
+				var params = $.extend({}, merge_into, param_set); //merge into url params, useful when only passing a partial param list but still want to push to browser history
+			} else {
+				var params = first_load?$.extend({}, merge_into, param_set):param_set; //browser does not support history object, so only trust pulling from the url on the initial load
+			}
+			
+			if(params.view)
 			{
 				//this may be where an ajax call is made using the params supplied to the function, but for this exercise we are using content already on the page
-				
-				var $article = $articles.filter("#" + params.animal); //jquery pointer to the article specified in url
-				var $nav_link = $nav.find("a[title='" + params.animal + "']"); //jquery pointer to the nav link specified in url
+				var $section = (content_box.sections).filter("#" + params.view); //jquery pointer to the area specified in url
+				var $nav_link = (content_box.nav).find("a[data-show='" + params.view + "']"); //jquery pointer to the nav link specified in url
 			
-				if($nav_link.length && $article.length) //before going forward, ensure there is a link and an article that match the param
+				//to scale out and use url params to perform addl actions, then handle those params here
+				if($nav_link.length && $section.length) //before going forward, ensure there is a link and an area that matches the param
 				{
-					if(!$nav_link.is(":first-child") && !$nav_link.hasClass("active")){$nav.addClass("responsive");} //if this isnt the first link in the nav AND the nav isnt already active (meaning this is a new page load) then add the responsive class to the nav so it's open on page load
-					$(".active", $nav).removeClass("active"); //remove all active links before setting a new active
-					$nav_link.addClass("active"); //set current to active;
-					$articles.not("#" + params.animal).hide(); //hide all articles that are not this one (using id attr)
-					$article.show();
+					if(!$nav_link.is(":first-child") && !$nav_link.hasClass("active")){(content_box.nav).addClass("responsive");} //if this isnt the first link in the nav AND the nav isnt already active (meaning this is a new page load) then add the responsive class to the nav so it's open on page load
+					$(".active", content_box.nav).removeClass("active"); //remove all active links before setting a new active
+					$nav_link.addClass("active"); //set current to active
+					(content_box.sections).not("#" + params.view).hide(); //hide all articles that are not this one (using id attr)
+					$section.show();
 				
-					//prepare to push to browser history object
-					var clean_url = $.extend({}, params); //duplicate the params object to allow for manipulation before sending to history object
-					delete clean_url.nopush; //dont bother using this in url
-					delete clean_url.force_replace; //again not to be used for url
-					
-					var url_add = $.param(clean_url) + (landing_hash&&landing_hash!=params.animal?"#"+landing_hash:"") +  "!view"; //rebuild the query string, taking only what is desired and add "!view" so the browser registers a unique push
-					var push_url = (location.protocol+'//'+location.host+location.pathname+(url_add!=""?"?"+url_add:"")); //rebuild the url using fresh parameterization
-					var title = document.title.split(" - ")[0] + " - " + params.animal; //set a new title - not supported by (most) browsers
-					params.title = title; //set the title of the page and save to state params using javascript
+					var title = document.title.split(" - ")[0] + " - " + params.view; //set a new title - not supported by (most) browsers
 					
 					if(history.pushState && !params.nopush) //ensure browser supports pushState and this isn't a back or forward click
 					{
-						if(landing_hash == params.animal || params.force_replace) //for a #animal hash which is replaced to "?animal" or this is a default_show
+						//prepare to push to browser history object
+						var clean_url = $.extend({}, clean_params(params)); //duplicate the params object to allow for manipulation before sending to history object, and rinse
+						var url_add = $.param(clean_url) + (landing_hash&&landing_hash!=params.view?"#"+landing_hash:"") +  "!new"; //rebuild the query string, taking only what is desired and add "!view" so the browser registers a unique push
+						var push_url = (location.protocol+'//'+location.host+location.pathname+(url_add!=""?"?"+url_add:"")); //rebuild the url using fresh parameterization
+						params.title = title; //set the title of the page and save to state params using javascript
+						
+						if(landing_hash == params.view || params.force_replace) //for a #view hash which is replaced to "?view" or this is a default_show
 						{
 							history.replaceState(params, title, push_url);
 						}
@@ -214,20 +241,16 @@ This page has been created by Joshua Lipinski <a href="http://github.com/jlipins
 							history.pushState(params, title, push_url);
 						}
 					}
-					//you could also add a hash scrolling function here in case there are multiple sections within an article. ex: ?animal=cheetah#habitat and intercept "habitat" in a $nav.on("click", "a", function(e){e.preventDefault();$(this).attr("href").split("#"); ...and pass it to active_tab as a "scroll_to" property
-					
+
 					document.title = title; //set the tab/window title
 					first_load = landing_hash = false; //clear both of these so the future pushStates can happen
 					return;
 				}
 			}
-			active_tab({animal: default_show, force_replace: true}); //run recursively to show default content if function has not returned
+			if(first_load){this.set($.extend(param_set, {view: content_box.default_show, force_replace: true}));} //run recursively to show default content during first_load function has not returned
 		}
-		
-		//run active tab on initial page load
-		active_tab(page_params);
-	});
-})();
+	};
+})(config.keep_params, config.content_area);
 
 </script>
 </body>
